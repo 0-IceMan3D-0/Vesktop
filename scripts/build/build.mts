@@ -34,6 +34,16 @@ const NodeCommonOpts: BuildOptions = {
     }
 };
 
+const RendererOpts: BuildOptions = {
+    ...CommonOpts,
+    format: "iife",
+    inject: ["./scripts/build/injectReact.mjs"],
+    jsxFactory: "VencordCreateElement",
+    jsxFragment: "VencordFragment",
+    external: ["@vencord/types/*"],
+    plugins: [vencordDep]
+};
+
 const contexts = [] as BuildContext[];
 async function createContext(options: BuildOptions) {
     contexts.push(await context(options));
@@ -116,15 +126,17 @@ await Promise.all([
         footer: { js: "//# sourceURL=VesktopUpdaterPreload" }
     }),
     createContext({
-        ...CommonOpts,
+        ...RendererOpts,
+        entryPoints: ["src/renderer/thirdPartyPlugins/vendroid.ts"],
+        outfile: "dist/vendroid/third_party_plugins.js",
+        sourcemap: false,
+        footer: { js: "//# sourceURL=VendroidThirdPartyPlugins" }
+    }),
+    createContext({
+        ...RendererOpts,
         globalName: "Vesktop",
         entryPoints: ["src/renderer/index.ts"],
         outfile: "dist/js/renderer.js",
-        format: "iife",
-        inject: ["./scripts/build/injectReact.mjs"],
-        jsxFactory: "VencordCreateElement",
-        jsxFragment: "VencordFragment",
-        external: ["@vencord/types/*"],
         plugins: [vencordDep, includeDirPlugin("patches", "src/renderer/patches")],
         footer: { js: "//# sourceURL=VesktopRenderer" }
     })

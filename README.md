@@ -2,6 +2,11 @@
 
 Vesktop is a custom Discord desktop app
 
+> [!NOTE]
+> This fork adds **third-party plugin support**: install Vencord plugins that aren't part of Vencord, without building Vencord yourself.
+> Open Settings → **Third-Party Plugins**, install a built plugin `.js` file from disk or a URL, restart, then enable it in the Plugins tab.
+> To turn a Vencord user plugin into such a file, see [scripts/plugin-sdk](scripts/plugin-sdk/README.md).
+
 **Main features**:
 
 - Vencord preinstalled

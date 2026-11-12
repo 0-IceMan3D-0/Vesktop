@@ -8,6 +8,7 @@ import type { Node } from "@vencord/venmic";
 import { ipcRenderer } from "electron/renderer";
 import type { IpcMessage, IpcResponse } from "main/ipcCommands";
 import type { Settings } from "shared/settings";
+import type { ThirdPartyPluginFile } from "shared/thirdPartyPlugins";
 
 import { IpcEvents } from "../shared/IpcEvents";
 import { invoke, sendSync } from "./typedIpc";
@@ -54,6 +55,13 @@ export const VesktopNative = {
         selectVencordDir: (value?: null) => invoke<"cancelled" | "invalid" | "ok">(IpcEvents.SELECT_VENCORD_DIR, value),
         chooseUserAsset: (asset: string, value?: null) =>
             invoke<"cancelled" | "invalid" | "ok" | "failed">(IpcEvents.CHOOSE_USER_ASSET, asset, value)
+    },
+    thirdPartyPlugins: {
+        list: () => sendSync<ThirdPartyPluginFile[]>(IpcEvents.THIRD_PARTY_PLUGINS_LIST),
+        installFromFile: () => invoke<string | null>(IpcEvents.THIRD_PARTY_PLUGINS_INSTALL_FILE),
+        installFromUrl: (url: string) => invoke<string>(IpcEvents.THIRD_PARTY_PLUGINS_INSTALL_URL, url),
+        remove: (fileName: string) => invoke<void>(IpcEvents.THIRD_PARTY_PLUGINS_REMOVE, fileName),
+        openFolder: () => invoke<void>(IpcEvents.THIRD_PARTY_PLUGINS_OPEN_FOLDER)
     },
     settings: {
         get: () => sendSync<Settings>(IpcEvents.GET_SETTINGS),
