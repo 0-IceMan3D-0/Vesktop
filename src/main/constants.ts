@@ -25,7 +25,15 @@ export const DATA_DIR =
 export const RESET_MARKER_FILE = join(DATA_DIR, ".reset-pending");
 if (existsSync(RESET_MARKER_FILE)) {
     try {
-        for (const entry of ["sessionData", "settings", "themes", "userAssets", "settings.json", "state.json"]) {
+        for (const entry of [
+            "sessionData",
+            "settings",
+            "themes",
+            "userAssets",
+            "plugins",
+            "settings.json",
+            "state.json"
+        ]) {
             rmSync(join(DATA_DIR, entry), { recursive: true, force: true, maxRetries: 5 });
         }
         rmSync(RESET_MARKER_FILE);

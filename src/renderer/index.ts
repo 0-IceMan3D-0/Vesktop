@@ -19,6 +19,12 @@ import SettingsUi from "./components/settings/Settings";
 import { VesktopLogger } from "./logger";
 import { Settings } from "./settings";
 export { Settings };
+import { initThirdPartyPlugins } from "./thirdPartyPlugins";
+
+initThirdPartyPlugins({
+    ...VesktopNative.thirdPartyPlugins,
+    restart: () => VesktopNative.app.relaunch()
+});
 
 VesktopLogger.log("read if cute :3");
 VesktopLogger.log("Vesktop v" + VesktopNative.app.getVersion());

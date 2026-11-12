@@ -9,6 +9,7 @@ import "./updater";
 import "./ipc";
 import "./rpc";
 import "./userAssets";
+import "./thirdPartyPlugins";
 import "./vesktopProtocol";
 import { app, BrowserWindow, nativeTheme } from "electron";
 

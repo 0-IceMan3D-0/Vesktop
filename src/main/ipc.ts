@@ -19,6 +19,7 @@ import { autoStart } from "./autoStart";
 import { enableHardwareAcceleration } from "./main";
 import { mainWin } from "./mainWindow";
 import { Settings, State } from "./settings";
+import { exposeVencordPluginMeta } from "./thirdPartyPlugins";
 import { handle, handleSync } from "./utils/ipcWrappers";
 import { PopoutWindows } from "./utils/popout";
 import { relaunch } from "./utils/relaunch";
@@ -30,7 +31,7 @@ handleSync(IpcEvents.GET_VENCORD_PRELOAD_SCRIPT, () =>
     readFileSync(join(VENCORD_FILES_DIR, "vencordDesktopPreload.js"), "utf-8")
 );
 handleSync(IpcEvents.GET_VENCORD_RENDERER_SCRIPT, () =>
-    readFileSync(join(VENCORD_FILES_DIR, "vencordDesktopRenderer.js"), "utf-8")
+    exposeVencordPluginMeta(readFileSync(join(VENCORD_FILES_DIR, "vencordDesktopRenderer.js"), "utf-8"))
 );
 
 const VESKTOP_RENDERER_JS_PATH = join(__dirname, "renderer.js");
