@@ -26,6 +26,7 @@ export interface ThirdPartyPluginHost {
 
 export interface LoadedFile {
     fileName: string;
+    bundled?: boolean;
     pluginName?: string;
     error?: string;
 }
@@ -117,7 +118,7 @@ export function loadThirdPartyPlugins(host: ThirdPartyPluginHost) {
         logger.warn("VencordPluginMeta is missing, plugin settings of third-party plugins may not open");
 
     for (const file of host.list()) {
-        const loaded: LoadedFile = { fileName: file.fileName };
+        const loaded: LoadedFile = { fileName: file.fileName, bundled: file.bundled };
         loadedFiles.push(loaded);
 
         try {

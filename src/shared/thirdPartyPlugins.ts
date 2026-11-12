@@ -7,4 +7,6 @@
 export interface ThirdPartyPluginFile {
     fileName: string;
     code: string;
+    /** Shipped with the app instead of installed by the user, so it can't be removed */
+    bundled?: boolean;
 }

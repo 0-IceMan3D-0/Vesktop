@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { mkdirSync, readdirSync, readFileSync } from "fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync } from "fs";
 import { copyFile, rm, writeFile } from "fs/promises";
 import { basename, join } from "path";
 
 import { dialog, net, shell } from "electron";
 import { IpcEvents } from "shared/IpcEvents";
+import { STATIC_DIR } from "shared/paths";
 import type { ThirdPartyPluginFile } from "shared/thirdPartyPlugins";
 
 import { DATA_DIR } from "./constants";
@@ -17,6 +18,7 @@ import { mainWin } from "./mainWindow";
 import { handle, handleSync } from "./utils/ipcWrappers";
 
 export const THIRD_PARTY_PLUGINS_DIR = join(DATA_DIR, "plugins");
+const BUNDLED_PLUGINS_DIR = join(STATIC_DIR, "plugins");
 mkdirSync(THIRD_PARTY_PLUGINS_DIR, { recursive: true });
 
 function pluginPath(fileName: string) {
@@ -41,12 +43,19 @@ export function exposeVencordPluginMeta(rendererScript: string) {
     return rendererScript.slice(0, match.index) + "globalThis.VencordPluginMeta=" + rendererScript.slice(match.index);
 }
 
-handleSync(IpcEvents.THIRD_PARTY_PLUGINS_LIST, (): ThirdPartyPluginFile[] =>
-    readdirSync(THIRD_PARTY_PLUGINS_DIR)
+function readPlugins(dir: string, bundled: boolean): ThirdPartyPluginFile[] {
+    if (!existsSync(dir)) return [];
+
+    return readdirSync(dir)
         .filter(f => f.endsWith(".js"))
         .sort()
-        .map(fileName => ({ fileName, code: readFileSync(join(THIRD_PARTY_PLUGINS_DIR, fileName), "utf-8") }))
-);
+        .map(fileName => ({ fileName, code: readFileSync(join(dir, fileName), "utf-8"), bundled }));
+}
+
+handleSync(IpcEvents.THIRD_PARTY_PLUGINS_LIST, () => [
+    ...readPlugins(BUNDLED_PLUGINS_DIR, true),
+    ...readPlugins(THIRD_PARTY_PLUGINS_DIR, false)
+]);
 
 handle(IpcEvents.THIRD_PARTY_PLUGINS_INSTALL_FILE, async () => {
     const res = await dialog.showOpenDialog(mainWin, {

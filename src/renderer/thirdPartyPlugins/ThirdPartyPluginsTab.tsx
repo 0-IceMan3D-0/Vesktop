@@ -13,6 +13,7 @@ import { loadedFiles, ThirdPartyPluginHost } from "./loader";
 interface Row {
     fileName: string;
     status: string;
+    bundled?: boolean;
     error?: string;
     removed?: boolean;
 }
@@ -62,7 +63,9 @@ export function ThirdPartyPluginsTab({ host }: { host: ThirdPartyPluginHost }) {
     const [rows, setRows] = useState<Row[]>(() =>
         loadedFiles.map(f => ({
             fileName: f.fileName,
-            status: f.pluginName ? `Plugin: ${f.pluginName}` : "Not loaded",
+            status:
+                (f.pluginName ? `Plugin: ${f.pluginName}` : "Not loaded") + (f.bundled ? " (comes with the app)" : ""),
+            bundled: f.bundled,
             error: f.error
         }))
     );
@@ -148,7 +151,7 @@ export function ThirdPartyPluginsTab({ host }: { host: ThirdPartyPluginHost }) {
                             {row.removed ? "Removed, restart to unload it" : (row.error ?? row.status)}
                         </Paragraph>
                     </div>
-                    {!row.removed && (
+                    {!row.removed && !row.bundled && (
                         <Button size="small" variant="dangerPrimary" onClick={() => remove(row.fileName)}>
                             Remove
                         </Button>
